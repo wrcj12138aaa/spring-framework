@@ -391,7 +391,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 			throws BeanDefinitionStoreException {
 
 		try {
-			// 解析成文档对象
+			//  获取 XML的 Document文档对象
 			Document doc = doLoadDocument(inputSource, resource);
 			// 注册 BeanDefinition
 			int count = registerBeanDefinitions(doc, resource);

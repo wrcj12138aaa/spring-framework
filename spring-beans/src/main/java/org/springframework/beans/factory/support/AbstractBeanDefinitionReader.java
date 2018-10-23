@@ -218,9 +218,11 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		}
 
 		if (resourceLoader instanceof ResourcePatternResolver) {
+			//  协调资源
 			// Resource pattern matching available.
 			try {
 				Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
+				//转换为 URL 后进行加载
 				int count = loadBeanDefinitions(resources);
 				if (actualResources != null) {
 					Collections.addAll(actualResources, resources);
@@ -238,6 +240,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		else {
 			// Can only load single resources by absolute URL.
 			Resource resource = resourceLoader.getResource(location);
+			//转换为 URL 后进行加载
 			int count = loadBeanDefinitions(resource);
 			if (actualResources != null) {
 				actualResources.add(resource);

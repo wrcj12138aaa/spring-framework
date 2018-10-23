@@ -515,6 +515,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			// 子类初始化 BeanFactory 的地方
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
@@ -522,30 +523,39 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				//  注册 BeanFactory 的后置处理
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				//  执行 BeanFactory 的后置处理
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				// 注册Bean的后置处理,在Bean 创建过程中调用
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				// 初始化 消息源
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				// 初始化应用上下文事件
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				// 初始化其他特殊Bean
 				onRefresh();
 
 				// Check for listener beans and register them.
+				// 注册 监听器 Bean 到容器中
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				// 实例化所有非 lazy-init 的实例
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				// 通知ContextRefreshedEvent事件,结束 refresh
 				finishRefresh();
 			}
 
@@ -556,9 +566,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				}
 
 				// Destroy already created singletons to avoid dangling resources.
+				// 防止 Bean 资源占用,销毁已经生产的 Bean
 				destroyBeans();
 
 				// Reset 'active' flag.
+				// 重置标志 active
 				cancelRefresh(ex);
 
 				// Propagate exception to caller.
@@ -619,6 +631,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #getBeanFactory()
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+		//初始化 BeanFactory 实例并返回
 		refreshBeanFactory();
 		return getBeanFactory();
 	}

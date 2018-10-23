@@ -379,6 +379,7 @@ public class BeanDefinitionParserDelegate {
 	 */
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) {
+		// H 获取< bean>元素定义的 id,name 属性
 		String id = ele.getAttribute(ID_ATTRIBUTE);
 		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
 
@@ -401,7 +402,7 @@ public class BeanDefinitionParserDelegate {
 			checkNameUniqueness(beanName, aliases, ele);
 		}
 
-		// 将bean元素转为 beanDefintion
+		// 详细解析 Bean 元素,将bean元素转为 beanDefintion
 		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
 		if (beanDefinition != null) {
 			if (!StringUtils.hasText(beanName)) {
@@ -470,6 +471,7 @@ public class BeanDefinitionParserDelegate {
 
 		this.parseState.push(new BeanEntry(beanName));
 
+		//记录 bean 所设置的 class,实例化工作在依赖注入过程中完成
 		String className = null;
 		if (ele.hasAttribute(CLASS_ATTRIBUTE)) {
 			className = ele.getAttribute(CLASS_ATTRIBUTE).trim();
@@ -480,9 +482,10 @@ public class BeanDefinitionParserDelegate {
 		}
 
 		try {
+			// 创建一个 BeanDefinition
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
 
-			// 解析 BeanDefinition 的顺序
+			// 解析 BeanDefinition 的 属性,并设置 description 信息
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
 
@@ -490,7 +493,9 @@ public class BeanDefinitionParserDelegate {
 			parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
 			parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
 
+			//解析  构造参数 元素
 			parseConstructorArgElements(ele, bd);
+			//解析 property 元素
 			parsePropertyElements(ele, bd);
 			parseQualifierElements(ele, bd);
 
@@ -806,10 +811,12 @@ public class BeanDefinitionParserDelegate {
 		}
 		this.parseState.push(new PropertyEntry(propertyName));
 		try {
+			// 若存在同名则返回: 多个 名称相同的 property,只会生效第一个
 			if (bd.getPropertyValues().contains(propertyName)) {
 				error("Multiple 'property' definitions for property '" + propertyName + "'", ele);
 				return;
 			}
+			// 解析 property 的值,封装到 PropertyValue 对象中
 			Object val = parsePropertyValue(ele, bd, propertyName);
 			PropertyValue pv = new PropertyValue(propertyName, val);
 			parseMetaElements(ele, pv);
@@ -890,6 +897,7 @@ public class BeanDefinitionParserDelegate {
 			}
 		}
 
+		//解析 ref 和 value
 		boolean hasRefAttribute = ele.hasAttribute(REF_ATTRIBUTE);
 		boolean hasValueAttribute = ele.hasAttribute(VALUE_ATTRIBUTE);
 		if ((hasRefAttribute && hasValueAttribute) ||
@@ -913,6 +921,7 @@ public class BeanDefinitionParserDelegate {
 			return valueHolder;
 		}
 		else if (subElement != null) {
+			// 解析子元素
 			return parsePropertySubElement(subElement, bd);
 		}
 		else {
@@ -981,6 +990,7 @@ public class BeanDefinitionParserDelegate {
 			return nullHolder;
 		}
 		else if (nodeNameEquals(ele, ARRAY_ELEMENT)) {
+			// 解析集合元素
 			return parseArrayElement(ele, bd);
 		}
 		else if (nodeNameEquals(ele, LIST_ELEMENT)) {
@@ -1084,6 +1094,7 @@ public class BeanDefinitionParserDelegate {
 	 * Parse a list element.
 	 */
 	public List<Object> parseListElement(Element collectionEle, @Nullable BeanDefinition bd) {
+		// 解析到的 list 集合用 ManagedList 封装
 		String defaultElementType = collectionEle.getAttribute(VALUE_TYPE_ATTRIBUTE);
 		NodeList nl = collectionEle.getChildNodes();
 		ManagedList<Object> target = new ManagedList<>(nl.getLength());
@@ -1114,6 +1125,7 @@ public class BeanDefinitionParserDelegate {
 		for (int i = 0; i < elementNodes.getLength(); i++) {
 			Node node = elementNodes.item(i);
 			if (node instanceof Element && !nodeNameEquals(node, DESCRIPTION_ELEMENT)) {
+				//递归解析
 				target.add(parsePropertySubElement((Element) node, bd, defaultElementType));
 			}
 		}

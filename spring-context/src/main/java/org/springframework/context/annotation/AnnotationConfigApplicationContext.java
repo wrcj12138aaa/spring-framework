@@ -16,8 +16,6 @@
 
 package org.springframework.context.annotation;
 
-import java.util.function.Supplier;
-
 import org.springframework.beans.factory.config.BeanDefinitionCustomizer;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -25,6 +23,8 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.function.Supplier;
 
 /**
  * Standalone application context, accepting annotated classes as input - in particular
@@ -94,8 +94,8 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * @param basePackages the packages to check for annotated classes
 	 */
 	public AnnotationConfigApplicationContext(String... basePackages) {
-		this();
-		scan(basePackages);
+		this(); // 初始化 reader,scanner,父类创建 DefaultListableBeanFactory 实例
+		scan(basePackages);//scanner 扫描注解类,并注册
 		refresh();
 	}
 

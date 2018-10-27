@@ -16,25 +16,8 @@
 
 package org.springframework.beans;
 
-import java.beans.PropertyChangeEvent;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.UndeclaredThrowableException;
-import java.security.PrivilegedActionException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.ConversionException;
@@ -44,6 +27,11 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import java.beans.PropertyChangeEvent;
+import java.lang.reflect.*;
+import java.security.PrivilegedActionException;
+import java.util.*;
 
 /**
  * A basic {@link ConfigurablePropertyAccessor} that provides the necessary
@@ -275,12 +263,14 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 			processKeyedProperty(tokens, pv);
 		}
 		else {
+			// 本地属性注入
 			processLocalProperty(tokens, pv);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private void processKeyedProperty(PropertyTokenHolder tokens, PropertyValue pv) {
+		// 获取 Bean对注入对象的引用
 		Object propValue = getPropertyHoldingValue(tokens);
 		PropertyHandler ph = getLocalPropertyHandler(tokens.actualName);
 		if (ph == null) {
@@ -291,6 +281,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 		String lastKey = tokens.keys[tokens.keys.length - 1];
 
 		if (propValue.getClass().isArray()) {
+			// 判断注入对象是否为 array
 			Class<?> requiredType = propValue.getClass().getComponentType();
 			int arrayIndex = Integer.parseInt(lastKey);
 			Object oldValue = null;
@@ -413,6 +404,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 	}
 
 	private void processLocalProperty(PropertyTokenHolder tokens, PropertyValue pv) {
+		// 获得对应的属性处理器
 		PropertyHandler ph = getLocalPropertyHandler(tokens.actualName);
 		if (ph == null || !ph.isWritable()) {
 			if (pv.isOptional()) {
@@ -455,6 +447,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 				}
 				pv.getOriginalPropertyValue().conversionNecessary = (valueToApply != originalValue);
 			}
+			// 注入方法,BeanWrapperImpl.BeanPropertyHandler内部调用 setter
 			ph.setValue(valueToApply);
 		}
 		catch (TypeMismatchException ex) {

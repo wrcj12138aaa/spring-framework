@@ -482,7 +482,7 @@ public class BeanDefinitionParserDelegate {
 		}
 
 		try {
-			// 创建一个 BeanDefinition
+			// 创建一个 AbstractBeanDefinitio,关联类信息和父对象
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
 
 			// 解析 BeanDefinition 的 属性,并设置 description 信息

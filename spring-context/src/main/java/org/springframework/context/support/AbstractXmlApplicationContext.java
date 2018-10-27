@@ -126,7 +126,7 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 		if (configResources != null) {
 			reader.loadBeanDefinitions(configResources);
 		}
-		// 取得资源位置
+		// 取得资源位置,在一开始实例 ApplicationContext 时已经设置configLocations
 		String[] configLocations = getConfigLocations();
 		if (configLocations != null) {
 			// XmlBeanDefinitionReader 加载定位资源

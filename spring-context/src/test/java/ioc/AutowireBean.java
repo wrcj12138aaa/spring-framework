@@ -1,39 +1,42 @@
 package ioc;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * @author One
  * @description
- * @date 2018/10/27
+ * @date 2018/10/28
  */
 @Component
 public class AutowireBean {
+	private String info;
 
-	private String name;
-	private String age;
+	@Autowired
+	private ComponentBean componentBean;
 
-	public void setName(String name) {
-		this.name = name;
+	public ComponentBean getComponentBean() {
+		return componentBean;
 	}
 
-	public String getName() {
-		return name;
+	public void setComponentBean(ComponentBean componentBean) {
+		this.componentBean = componentBean;
 	}
 
-	public void setAge(String age) {
-		this.age = age;
+	public String getInfo() {
+		return info;
 	}
 
-	public String getAge() {
-		return age;
+	public void setInfo(String info) {
+		this.info = info;
 	}
+
 
 	@Override
 	public String toString() {
 		return "AutowireBean{" +
-				"name='" + name + '\'' +
-				", age='" + age + '\'' +
+				"info='" + info + '\'' +
+				", componentBean=" + componentBean +
 				'}';
 	}
 }

@@ -14,9 +14,19 @@ public class IoCLab {
 	public void testIoC() {
 		AnnotationConfigApplicationContext ctx = new
 				AnnotationConfigApplicationContext("ioc.");
-		AutowireBean bean = ctx.getBean(AutowireBean.class);
+		ComponentBean bean = ctx.getBean(ComponentBean.class);
 		System.out.println(bean);
 		TestBean bean1 = ctx.getBean(TestBean.class);
+		System.out.println(bean1);
+	}
+
+	@Test
+	public void testIoC2() {
+		AnnotationConfigApplicationContext ctx = new
+				AnnotationConfigApplicationContext("ioc.");
+		AutowireBean bean = ctx.getBean(AutowireBean.class);
+		System.out.println(bean);
+		ComponentBean bean1 = ctx.getBean(ComponentBean.class);
 		System.out.println(bean1);
 	}
 }
